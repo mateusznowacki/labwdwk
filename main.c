@@ -2,29 +2,41 @@
 #include <stdlib.h>
 #include <time.h>
 #include <malloc.h>
+#include <string.h>
 
 
 int getTestParams();
 
+int getOptionsNumbers();
+
+char *getFileName();
+
+int getIterationsFromFile(char *filename);
+
 int *generateIntNumbers(int iterations);
+
+int *readIntFromFile(char *filename, int iiterations);
 
 float *generateFloatNumbers(int iterations);
 
-unsigned long long int addTwoInt(int a, int b);
+float *readFloatFromFile(char *filename, int iterations);
 
-unsigned long long int addTwoFloat(float a, float b);
+double addTwoInt(int a, int b);
 
-void testInt(int iterations, int *generatedIntNumbersa, int *generatedIntNumbersB);
+double addTwoFloat(float a, float b);
+
+void testInt(int iterations, int *generatedIntNumbersA, int *generatedIntNumbersB);
 
 void testFloat(int iterations, float *generatedFloatNumbers, float *generatedFloatNumbersB);
 
 void saveIntArrayToFile(int *array, int size, char *filename);
 
 void saveFloatArrayToFile(float *array, int size, char *filename);
-void saveLongLongArrayToFile(unsigned long long int *array, int size, char *filename) ;
+
+void saveDoubleArrayToFile(double *array, int size, char *filename);
 
 int main(void) {
-    int wybor;
+    int choice;
     int iterations;
     int *generatedIntNumbersA = NULL;
     int *generatedIntNumbersB = NULL;
@@ -38,9 +50,9 @@ int main(void) {
         printf("3. Testy float\n");
         printf("4. Wyjscie\n");
         printf("Wybierz opcje: \n");
-        scanf("%d", &wybor);
+        scanf("%d", &choice);
 
-        switch (wybor) {
+        switch (choice) {
             case 1:
                 iterations = getTestParams();
                 int typ;
@@ -60,19 +72,61 @@ int main(void) {
                     saveFloatArrayToFile(generatedFloatNumbersB, iterations, "floatB.txt");
                 }
                 break;
-            case 2:
-                testInt(iterations, generatedIntNumbersA, generatedIntNumbersB);
+            case 2: {
+                int choice = getOptionsNumbers();
+                if (choice == 1) {
+                    testInt(iterations, generatedIntNumbersA, generatedIntNumbersB);
+                } else if (choice == 2) {
+                    iterations = getTestParams();
+                    generatedIntNumbersA = generateIntNumbers(iterations);
+                    generatedIntNumbersB = generateIntNumbers(iterations);
+
+                    saveIntArrayToFile(generatedIntNumbersA, iterations, "intA.txt");
+                    saveIntArrayToFile(generatedIntNumbersB, iterations, "intB.txt");
+
+                    testInt(iterations, generatedIntNumbersA, generatedIntNumbersB);
+                } else if (choice == 3) {
+                    printf("Podaj nazwe pliku A do odczytu\n");
+                    char *filename1 = getFileName();
+                    printf("Podaj nazwe pliku B do odczytu\n");
+                    char *filename2 = getFileName();
+                    int iterations = getIterationsFromFile(filename1);
+                    testInt(iterations, readIntFromFile(filename1, iterations),
+                            readIntFromFile(filename2, iterations));
+                }
+            }
                 break;
-            case 3:
-                testFloat(iterations, generatedFloatNumbersA, generatedFloatNumbersB);
+            case 3: {
+                int choice = getOptionsNumbers();
+                if (choice == 1) {
+                    testFloat(iterations, generatedFloatNumbersA, generatedFloatNumbersB);
+                } else if (choice == 2) {
+                    iterations = getTestParams();
+                    generatedFloatNumbersA = generateFloatNumbers(iterations);
+                    generatedFloatNumbersB = generateFloatNumbers(iterations);
+
+                    saveFloatArrayToFile(generatedFloatNumbersA, iterations, "floatA.txt");
+                    saveFloatArrayToFile(generatedFloatNumbersB, iterations, "floatB.txt");
+
+                    testFloat(iterations, generatedFloatNumbersA, generatedFloatNumbersB);
+                } else if (choice == 3) {
+                    printf("Podaj nazwe pliku A do odczytu\n");
+                    char *filename1 = getFileName();
+                    printf("Podaj nazwe pliku B do odczytu\n");
+                    char *filename2 = getFileName();
+                    int iterations = getIterationsFromFile(filename1);
+                    testFloat(iterations, readFloatFromFile(filename1, iterations),
+                              readFloatFromFile(filename2, iterations));
+                }
+            }
                 break;
             case 4:
                 printf("Wyjscie z programu.\n");
                 break;
             default:
-                printf("Niepoprawny wybor. Wybierz ponownie.\n");
+                printf("Niepoprawny choice. Wybierz ponownie.\n");
         }
-    } while (wybor != 4);
+    } while (choice != 4);
 
     // Zwolnienie pamięci dla tablic
     free(generatedIntNumbersA);
@@ -85,40 +139,42 @@ int main(void) {
 
 int getTestParams() {
     int iterations;
-    printf("Podaj liczbe dodawan ktore chcesz sprawdzic: ");
-    scanf("%d", &iterations); // Poprawka: dodano & przed iterations
+    printf("Podaj liczbe dodawan ktore chcesz sprawdzic: \n");
+    scanf("%d", &iterations);
     return iterations;
 }
 
 
-unsigned long long int addTwoInt(int a, int b) {
-    clock_t start, end;
-    unsigned long long int cykle_procesora;
+double addTwoInt(int a, int b) {
+    struct timespec start, end;
+    double time;
 
-    start = clock(); // Zapisanie czasu startu
-    // Wywołanie funkcji dodawania
-    int wynik = a + b;
-    end = clock(); // Zapisanie czasu zakończenia
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
-    // Obliczenie liczby cykli procesora
-    cykle_procesora = (unsigned long long int) (end - start);
+    int result = a + b;
 
-    return cykle_procesora;
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Oblicz różnicę czasów
+    time = end.tv_nsec - start.tv_nsec;
+
+    return time;
 }
 
-unsigned long long int addTwoFloat(float a, float b) {
-    clock_t start, end;
-    unsigned long long int cykle_procesora;
+double addTwoFloat(float a, float b) {
+    struct timespec start, end;
+    double time;
 
-    start = clock(); // Zapisanie czasu startu
-    // Wywołanie funkcji dodawania
-    float wynik = a + b;
-    end = clock(); // Zapisanie czasu zakończenia
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
-    // Obliczenie liczby cykli procesora
-    cykle_procesora = (unsigned long long int) (end - start);
+    float result = a + b;
 
-    return cykle_procesora;
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Oblicz różnicę czasów
+    time = end.tv_nsec - start.tv_nsec;
+
+    return time;
 }
 
 int *generateIntNumbers(int iterations) {
@@ -127,13 +183,10 @@ int *generateIntNumbers(int iterations) {
         printf("Blad alokacji pamieci.\n");
         exit(1);
     }
-    srand(time(NULL));
+
     // Generowanie liczb całkowitych
     for (int i = 0; i < iterations; i++) {
         numbers[i] = rand(); // Przykładowa generacja liczb całkowitych
-    }
-    for (int i = 0; i < iterations; i++) {
-        printf("%d\n", numbers[i]);
     }
 
     return numbers; // Zwracanie wskaźnika do tablicy
@@ -148,32 +201,30 @@ float *generateFloatNumbers(int iterations) {
 
     // Generowanie liczb zmiennoprzecinkowych
     for (int i = 0; i < iterations; i++) {
-        numbers[i] = (float) rand() / RAND_MAX; // Przykładowa generacja liczb zmiennoprzecinkowych z zakresu [0,1]
-    }
-
-    for (int i = 0; i < iterations; i++) {
-        printf("%.100f\n", numbers[i]);
+        numbers[i] = (float) rand() / RAND_MAX * 100.0;
     }
 
     return numbers; // Zwracanie wskaźnika do tablicy
 }
 
 void testInt(int iterations, int *generatedIntNumbersA, int *generatedIntNumbersB) {
-    unsigned long long int  *resultTime = (unsigned long long int *) malloc(iterations * sizeof(unsigned long long int));
+    double *resultTime = (double *) malloc(iterations * sizeof(double));
 
     for (int i = 0; i < iterations; ++i) {
         resultTime[i] = addTwoInt(generatedIntNumbersA[i], generatedIntNumbersB[i]);
-        printf("%.8f\n", resultTime[i]);
     }
-    saveLongLongArrayToFile(resultTime, iterations, "intTime.txt");
+    saveDoubleArrayToFile(resultTime, iterations, "intTime.txt");
+    printf("Testy zakończone pomyślnie\n");
 }
 
 void testFloat(int iterations, float *generatedFloatNumbersA, float *generatedFloatNumbersB) {
-    unsigned long long int  *resultTime = (unsigned long long int *) malloc(iterations * sizeof(unsigned long long int));
+    double *resultTime = (double *) malloc(iterations * sizeof(double));
+
     for (int i = 0; i < iterations; ++i) {
-        addTwoFloat(generatedFloatNumbersA[i], generatedFloatNumbersB[i]);
+        resultTime[i] = addTwoFloat(generatedFloatNumbersA[i], generatedFloatNumbersB[i]);
     }
-    saveLongLongArrayToFile(resultTime, iterations, "floatTime.txt");
+    saveDoubleArrayToFile(resultTime, iterations, "floatTime.txt");
+    printf("Testy zakończone pomyślnie\n");
 }
 
 
@@ -208,18 +259,119 @@ void saveFloatArrayToFile(float *array, int size, char *filename) {
 
 }
 
-void saveLongLongArrayToFile(unsigned long long int *array, int size, char *filename) {
+void saveDoubleArrayToFile(double *array, int size, char *filename) {
     FILE *file = fopen(filename, "w"); // Otwarcie pliku do zapisu
     if (file == NULL) {
         printf("Nie można otworzyć pliku %s\n", filename);
         return;
     }
 
-    // Zapisanie każdej liczby zmiennoprzecinkowej z tablicy do pliku
+    // Zapisanie każdej liczby całkowitej z tablicy do pliku
     for (int i = 0; i < size; i++) {
-        fprintf(file, "%llu\n", array[i]);
+        fprintf(file, "%.0lf\n", array[i]);
     }
 
     fclose(file); // Zamknięcie pliku
-
 }
+
+int getOptionsNumbers() {
+    int choice;
+    printf("Wybierz które liczby chcesz uzyc do obliczen\n");
+    printf("1. Wygenerowane w programie\n");
+    printf("2. Wygeneruj nowe\n");
+    printf("3. Wczytaj z pliku\n");
+    scanf("%d", &choice);
+    return choice;
+}
+
+int getIterationsFromFile(char *filename) {
+    FILE *file = fopen(filename, "r"); // Otwórz plik do odczytu
+    if (file == NULL) {
+        printf("Nie można otworzyć pliku.\n");
+        return -1; // Zwróć -1 w przypadku błędu otwarcia pliku
+    }
+
+    int iterations = 0;
+    char buffer[100]; // Bufor do przechowywania wczytywanych linii
+
+    // Iteruj przez każdą linię w pliku i zwiększaj licznik iteracji
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        iterations++;
+    }
+
+    fclose(file); // Zamknij plik
+
+    return iterations; // Zwróć liczbę iteracji
+}
+
+
+int *readIntFromFile(char *filename, int iterations) {
+    FILE *file = fopen(filename, "r"); // Otwórz plik do odczytu
+    if (file == NULL) {
+        printf("Nie można otworzyć pliku.\n");
+        return NULL; // Zwróć NULL w przypadku błędu otwarcia pliku
+    }
+
+    int *numbers = (int *) malloc(iterations * sizeof(int)); // Alokacja pamięci dla tablicy dynamicznej
+
+    // Wczytaj liczby z pliku do tablicy
+    for (int i = 0; i < iterations; i++) {
+        if (fscanf(file, "%d", &numbers[i]) != 1) {
+            printf("Błąd odczytu z pliku.\n");
+            free(numbers); // Zwolnij pamięć, jeśli wystąpił błąd odczytu
+            fclose(file); // Zamknij plik
+            return NULL;
+        }
+    }
+
+    fclose(file); // Zamknij plik
+
+    return numbers; // Zwróć wskaźnik do tablicy z wczytanymi liczbami
+}
+
+float *readFloatFromFile(char *filename, int iterations) {
+    FILE *file = fopen(filename, "r"); // Otwórz plik do odczytu
+    if (file == NULL) {
+        printf("Nie można otworzyć pliku.\n");
+        return NULL; // Zwróć NULL w przypadku błędu otwarcia pliku
+    }
+
+    float *numbers = (float *) malloc(iterations * sizeof(float)); // Alokacja pamięci dla tablicy dynamicznej
+
+    // Wczytaj liczby z pliku do tablicy
+    for (int i = 0; i < iterations; i++) {
+        if (fscanf(file, "%f", &numbers[i]) != 1) {
+            printf("Błąd odczytu z pliku.\n");
+            free(numbers); // Zwolnij pamięć, jeśli wystąpił błąd odczytu
+            fclose(file); // Zamknij plik
+            return NULL;
+        }
+    }
+
+    fclose(file); // Zamknij plik
+
+    return numbers; // Zwróć wskaźnik do tablicy z wczytanymi liczbami
+}
+
+char *getFileName() {
+    char buffer[100]; // Bufor na wczytanie nazwy pliku
+    scanf("%99s", buffer);
+
+    // Oblicz długość wczytanej nazwy pliku (bez uwzględniania znaku nowej linii)
+    size_t length = strlen(buffer);
+    if (buffer[length - 1] == '\n') {
+        buffer[length - 1] = '\0'; // Usuń znak nowej linii
+        length--; // Zmniejsz długość o 1
+    }
+
+    // Alokuj pamięć dla nazwy pliku i skopiuj do niej wczytaną nazwę
+    char *filename = (char *) malloc((length + 1) * sizeof(char)); // +1 na znak końca ciągu
+    if (filename == NULL) {
+        printf("Błąd alokacji pamięci.\n");
+        return NULL;
+    }
+    strcpy(filename, buffer);
+
+    return filename; // Zwróć wskaźnik na nazwę pliku
+}
+
