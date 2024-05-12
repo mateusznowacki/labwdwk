@@ -1,3 +1,3 @@
-G:/cpp/labwdwk/cmake-build-debug/CMakeFiles/labwdwk.dir
-G:/cpp/labwdwk/cmake-build-debug/CMakeFiles/edit_cache.dir
-G:/cpp/labwdwk/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/mateusz/CLionProjects/labwdwk/cmake-build-debug/CMakeFiles/labwdwk.dir
+/home/mateusz/CLionProjects/labwdwk/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/mateusz/CLionProjects/labwdwk/cmake-build-debug/CMakeFiles/rebuild_cache.dir

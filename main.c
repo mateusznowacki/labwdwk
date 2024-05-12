@@ -15,7 +15,7 @@ int getIterationsFromFile(char *filename);
 
 int *generateIntNumbers(int iterations);
 
-int *readIntFromFile(char *filename, int iiterations);
+int *readIntFromFile(char *filename, int iterations);
 
 float *generateFloatNumbers(int iterations);
 
@@ -157,6 +157,7 @@ double addTwoInt(int a, int b) {
 
     // Oblicz różnicę czasów
     time = end.tv_nsec - start.tv_nsec;
+    printf("%f\n",time);
 
     return time;
 }
@@ -173,7 +174,7 @@ double addTwoFloat(float a, float b) {
 
     // Oblicz różnicę czasów
     time = end.tv_nsec - start.tv_nsec;
-
+    printf("%f\n",time);
     return time;
 }
 
@@ -209,9 +210,10 @@ float *generateFloatNumbers(int iterations) {
 
 void testInt(int iterations, int *generatedIntNumbersA, int *generatedIntNumbersB) {
     double *resultTime = (double *) malloc(iterations * sizeof(double));
-
+    double time;
     for (int i = 0; i < iterations; ++i) {
-        resultTime[i] = addTwoInt(generatedIntNumbersA[i], generatedIntNumbersB[i]);
+        time = addTwoInt(generatedIntNumbersA[i], generatedIntNumbersB[i]);
+        resultTime[i] = time;
     }
     saveDoubleArrayToFile(resultTime, iterations, "intTime.txt");
     printf("Testy zakończone pomyślnie\n");
@@ -219,9 +221,10 @@ void testInt(int iterations, int *generatedIntNumbersA, int *generatedIntNumbers
 
 void testFloat(int iterations, float *generatedFloatNumbersA, float *generatedFloatNumbersB) {
     double *resultTime = (double *) malloc(iterations * sizeof(double));
-
+    double time;
     for (int i = 0; i < iterations; ++i) {
-        resultTime[i] = addTwoFloat(generatedFloatNumbersA[i], generatedFloatNumbersB[i]);
+        time = addTwoFloat(generatedFloatNumbersA[i], generatedFloatNumbersB[i]);
+        resultTime[i] = time;
     }
     saveDoubleArrayToFile(resultTime, iterations, "floatTime.txt");
     printf("Testy zakończone pomyślnie\n");
@@ -268,7 +271,7 @@ void saveDoubleArrayToFile(double *array, int size, char *filename) {
 
     // Zapisanie każdej liczby całkowitej z tablicy do pliku
     for (int i = 0; i < size; i++) {
-        fprintf(file, "%.0lf\n", array[i]);
+        fprintf(file, "%.0f\n", array[i]);
     }
 
     fclose(file); // Zamknięcie pliku
@@ -374,4 +377,3 @@ char *getFileName() {
 
     return filename; // Zwróć wskaźnik na nazwę pliku
 }
-
