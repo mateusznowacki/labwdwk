@@ -157,7 +157,7 @@ double addTwoInt(int a, int b) {
 
     // Oblicz różnicę czasów
     time = end.tv_nsec - start.tv_nsec;
-    printf("%f\n",time);
+  //  printf("%f\n",time);
 
     return time;
 }
@@ -174,7 +174,7 @@ double addTwoFloat(float a, float b) {
 
     // Oblicz różnicę czasów
     time = end.tv_nsec - start.tv_nsec;
-    printf("%f\n",time);
+//    printf("%f\n",time);
     return time;
 }
 
@@ -215,7 +215,7 @@ void testInt(int iterations, int *generatedIntNumbersA, int *generatedIntNumbers
         time = addTwoInt(generatedIntNumbersA[i], generatedIntNumbersB[i]);
         resultTime[i] = time;
     }
-    saveDoubleArrayToFile(resultTime, iterations, "intTime.txt");
+    saveDoubleArrayToFile(resultTime, iterations, "intAddTime.txt");
     printf("Testy zakończone pomyślnie\n");
 }
 
@@ -226,7 +226,7 @@ void testFloat(int iterations, float *generatedFloatNumbersA, float *generatedFl
         time = addTwoFloat(generatedFloatNumbersA[i], generatedFloatNumbersB[i]);
         resultTime[i] = time;
     }
-    saveDoubleArrayToFile(resultTime, iterations, "floatTime.txt");
+    saveDoubleArrayToFile(resultTime, iterations, "floatAddTime.txt");
     printf("Testy zakończone pomyślnie\n");
 }
 
