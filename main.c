@@ -22,8 +22,14 @@ float *generateFloatNumbers(int iterations);
 float *readFloatFromFile(char *filename, int iterations);
 
 double addTwoInt(int a, int b);
+double subTwoInt(int a, int b);
+double mulTwoInt(int a, int b);
+double divTwoInt(int a, int b);
 
 double addTwoFloat(float a, float b);
+double subTwoFloat(float a, float b);
+double mulTwoFloat(float a, float b);
+double divTwoFloat(float a, float b);
 
 void testInt(int iterations, int *generatedIntNumbersA, int *generatedIntNumbersB);
 
@@ -216,6 +222,25 @@ void testInt(int iterations, int *generatedIntNumbersA, int *generatedIntNumbers
         resultTime[i] = time;
     }
     saveDoubleArrayToFile(resultTime, iterations, "intAddTime.txt");
+
+    for (int i = 0; i < iterations; ++i) {
+        time = subTwoInt(generatedIntNumbersA[i], generatedIntNumbersB[i]);
+        resultTime[i] = time;
+    }
+    saveDoubleArrayToFile(resultTime, iterations, "intSubTime.txt");
+
+    for (int i = 0; i < iterations; ++i) {
+        time = mulTwoInt(generatedIntNumbersA[i], generatedIntNumbersB[i]);
+        resultTime[i] = time;
+    }
+    saveDoubleArrayToFile(resultTime, iterations, "intMulTime.txt");
+
+    for (int i = 0; i < iterations; ++i) {
+        time = divTwoInt(generatedIntNumbersA[i], generatedIntNumbersB[i]);
+        resultTime[i] = time;
+    }
+    saveDoubleArrayToFile(resultTime, iterations, "intDivTime.txt");
+
     printf("Testy zakończone pomyślnie\n");
 }
 
@@ -227,6 +252,25 @@ void testFloat(int iterations, float *generatedFloatNumbersA, float *generatedFl
         resultTime[i] = time;
     }
     saveDoubleArrayToFile(resultTime, iterations, "floatAddTime.txt");
+
+    for (int i = 0; i < iterations; ++i) {
+        time = subTwoFloat(generatedFloatNumbersA[i], generatedFloatNumbersB[i]);
+        resultTime[i] = time;
+    }
+    saveDoubleArrayToFile(resultTime, iterations, "floatSubTime.txt");
+
+    for (int i = 0; i < iterations; ++i) {
+        time = mulTwoFloat(generatedFloatNumbersA[i], generatedFloatNumbersB[i]);
+        resultTime[i] = time;
+    }
+    saveDoubleArrayToFile(resultTime, iterations, "floatMulTime.txt");
+
+    for (int i = 0; i < iterations; ++i) {
+        time = divTwoFloat(generatedFloatNumbersA[i], generatedFloatNumbersB[i]);
+        resultTime[i] = time;
+    }
+    saveDoubleArrayToFile(resultTime, iterations, "floatDivTime.txt");
+
     printf("Testy zakończone pomyślnie\n");
 }
 
@@ -376,4 +420,104 @@ char *getFileName() {
     strcpy(filename, buffer);
 
     return filename; // Zwróć wskaźnik na nazwę pliku
+}
+
+double subTwoInt(int a, int b) {
+    struct timespec start, end;
+    double time;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    int result = a - b;
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Oblicz różnicę czasów
+    time = end.tv_nsec - start.tv_nsec;
+    //  printf("%f\n",time);
+
+    return time;
+
+}
+
+double mulTwoInt(int a, int b) {
+    struct timespec start, end;
+    double time;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    int result = a * b;
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Oblicz różnicę czasów
+    time = end.tv_nsec - start.tv_nsec;
+    //  printf("%f\n",time);
+
+    return time;
+}
+
+double divTwoInt(int a, int b) {
+    struct timespec start, end;
+    double time;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    int result = a / b;
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Oblicz różnicę czasów
+    time = end.tv_nsec - start.tv_nsec;
+    //  printf("%f\n",time);
+
+    return time;
+}
+
+double subTwoFloat(float a, float b) {
+    struct timespec start, end;
+    double time;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    float result = a - b;
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Oblicz różnicę czasów
+    time = end.tv_nsec - start.tv_nsec;
+//    printf("%f\n",time);
+    return time;
+}
+
+double mulTwoFloat(float a, float b) {
+    struct timespec start, end;
+    double time;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    float result = a * b;
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Oblicz różnicę czasów
+    time = end.tv_nsec - start.tv_nsec;
+//    printf("%f\n",time);
+    return time;
+}
+
+double divTwoFloat(float a, float b) {
+    struct timespec start, end;
+    double time;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    float result = a / b;
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Oblicz różnicę czasów
+    time = end.tv_nsec - start.tv_nsec;
+//    printf("%f\n",time);
+    return time;
 }
